@@ -38,6 +38,9 @@ AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
 class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True, db_index=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True, default=None)
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -47,8 +50,6 @@ class User(AbstractUser, PermissionsMixin):
         max_length=255, blank=True,
         null=False, default=AUTH_PROVIDERS.get('email')
     )
-    groups = models.ManyToManyField('auth.Group', related_name='custom_user_groups')
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='custom_user_permissions')
 
     USERNAME_FIELD = 'email' # имейл будет использоваться в качестве уникального идентификатора пользователя при аутентификации
     REQUIRED_FIELDS = ['username'] # какие данные мы будем заполнять при создании суперпользователя
@@ -72,6 +73,3 @@ class Hash(models.Model):
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     hash = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(default=timezone.now)
-
-
-
