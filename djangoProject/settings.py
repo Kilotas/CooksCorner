@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'authorization',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'drf_yasg'
+    'drf_yasg',
+    'dishes',
 ]
 
 MIDDLEWARE = [
@@ -161,13 +162,11 @@ STATIC_URL = 'static/'
 
 
 
-cloudinary_storage = {
+CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dhqc5ezrc',
     'API_KEY': '169291761876912',
-    'API_SECRET_KEY': 'EfSQVKRAFFs74kHgrxJtoPzMNLk'
+    'API_SECRET': 'EfSQVKRAFFs74kHgrxJtoPzMNLk'
 }
-
-
 
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

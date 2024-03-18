@@ -7,6 +7,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from dishes.views import RecipeCreateAPIView, RecipeListAPIView, RecipeDetailAPIView
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -41,6 +43,9 @@ urlpatterns = [
     path('email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('login/', LoginAPIView.as_view(), name="login"),
     path('register/personal-info/', RegisterPersonalInfoView.as_view(), name='register-personal-info'),
+    path('recipes/', RecipeCreateAPIView.as_view(), name='recipe-create'),
+    path('main/', RecipeListAPIView.as_view(), name='main-page'),
+    path('recipes/<int:pk>/', RecipeDetailAPIView.as_view(), name='recipe-detail'),
 ]
 
 
