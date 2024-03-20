@@ -38,6 +38,8 @@ AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
 class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True, db_index=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
+    bio = models.TextField(null=True)
+    image = models.ImageField(upload_to='user_photos', blank=True, null=True)
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True, default=None)
