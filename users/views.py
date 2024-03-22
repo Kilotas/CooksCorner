@@ -124,27 +124,36 @@ class FollowUserAPIView(APIView):
 
 
 class UnfollowUserAPIView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
     @swagger_auto_schema(
         tags=['Users'],
         operation_description="Unfollow a user.",
-        manual_parameters=[
-            openapi.Parameter('user_id', openapi.IN_PATH, description="ID of the user to unfollow.",
-                              type=openapi.TYPE_INTEGER),
-        ],
         responses={
-            200: "Successfully unfollowed user.",
+            200: "User unfollowed successfully.",
             400: "Bad request. Invalid input data.",
             404: "User not found.",
             500: "Internal server error. Failed to process the request."
         }
     )
-    def post(self, request, user_id):
-        # получение пользователя от которого нужно отписаться
-        followed_user = User.objects.get(id=user_id)
-        # Получаем текущего пользователя
-        current_user = request.user
-        # Удаляем followed user из список подписок текущего пользователя
-        current_user.following.remove(followed_user)
-        return Response("Successfully unfollowed user", status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        try:
+            following_user = User.objects.get(id=kwargs['user_id'])
+        except:
+            return Response({'data': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        follower = request.user
+
+        if follower == following_user:
+            return Response({"message": "You can't unfollow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if follower not in following_user.follow.all():
+            return Response({"message": "You are not following this user"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        following_user.follow.remove(follower)
+        follower.following.remove(following_user)
+
+        return Response({"message": "You have unfollowed this user"}, status=status.HTTP_200_OK)
 
 
