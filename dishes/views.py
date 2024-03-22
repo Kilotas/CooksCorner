@@ -81,7 +81,7 @@ class RecipeCategoryAPIView(APIView):
     permission_classes = [IsAuthenticated,]
     @swagger_auto_schema(
         tags=['Recipes'],
-        operation_description="Endpoint for retrieving a list of recipes by category. 'BREAKFAST', 'DINNER', or 'LUNCH'.",
+        operation_description="Endpoint for retrieving a list of recipes by category. BREAKFAST, DINNER, or LUNCH.",
         manual_parameters=[
             openapi.Parameter('category', openapi.IN_QUERY, description="Filter recipes by category.", type=openapi.TYPE_STRING),
         ],
@@ -100,6 +100,28 @@ class RecipeCategoryAPIView(APIView):
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data)
 
+class RecipeSearchAPIView(APIView):
+    @swagger_auto_schema(
+        tags=['Recipes'],
+        operation_description="Endpoint for searching recipes by title.",
+        manual_parameters=[
+            openapi.Parameter('q', openapi.IN_QUERY, description="Search query string.", type=openapi.TYPE_STRING),
+        ],
+        responses={
+            200: RecipeSerializer(many=True),
+            500: "Internal server error. Failed to process the request."
+        }
+    )
+    def get(self, request):
+        # Извлекаем значение параметра 'q' из параметров запроса. Если параметр не передан, используем пустую строку.
+        query = request.query_params.get('q', '')
+
+        if not query:
+            return Response("Search query 'q' is required.", status=status.HTTP_400_BAD_REQUEST)
+
+        recipes = Recipe.objects.filter(title__icontains=query)
+        serializer = RecipeSerializer(recipes, many=True)
+        return Response(serializer.data)
 
 
 
