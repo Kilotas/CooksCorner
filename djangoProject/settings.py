@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import cloudinary_storage
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +29,7 @@ SECRET_KEY = 'django-insecure-15ne@7&kf_tks!9c+b_(=70-(9)lw1x$2j+$y*&m#$g=ma^t%)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -154,7 +155,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 
@@ -171,6 +172,13 @@ CLOUDINARY_STORAGE = {
 
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+CSRF_TRUSTED_ORIGINS = ['https://neobook.online']
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 
 AUTH_USER_MODEL = 'authorization.User'
