@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'dishes',
     'users',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -66,8 +67,7 @@ ROOT_URLCONF = 'djangoProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -173,6 +173,7 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+AUTH_USER_MODEL = 'authorization.User'
 
 CSRF_TRUSTED_ORIGINS = ['https://neobook.online']
 
@@ -181,4 +182,4 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 
-AUTH_USER_MODEL = 'authorization.User'
+
