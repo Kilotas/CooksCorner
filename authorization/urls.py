@@ -7,7 +7,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-from dishes.views import RecipeCreateAPIView, RecipeListAPIView, RecipeDetailAPIView, RecipeCategoryAPIView, RecipeSearchAPIView
+from dishes.views import RecipeCreateAPIView, RecipeListAPIView, RecipeDetailAPIView, RecipeCategoryAPIView, RecipeSearchAPIView, LikeAPIView
 from users.views import UserListAPIView, FollowUserAPIView, UnfollowUserAPIView, MyPageAPIView, MyPageUpdateAPIView
 
 
@@ -54,6 +54,7 @@ urlpatterns = [
     path('users/<int:user_id>/unfollow/', UnfollowUserAPIView.as_view(), name='unfollow_user'),
     path('mypage/', MyPageAPIView.as_view(), name='mypage'),
     path('my-page/update', MyPageUpdateAPIView.as_view(), name='my-page-update'),
+    path('recipes/<int:recipe_id>/like/', LikeAPIView.as_view(), name='like-recipe'),
 ]
 
 
