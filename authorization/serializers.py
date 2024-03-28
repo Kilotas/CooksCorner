@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib import auth
-from .models import User, Hash
+from .models import User
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -60,29 +60,33 @@ class RegisterPersonalInfoSerializer(serializers.Serializer):
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255, min_length=3)
     password = serializers.CharField(
-        max_length=16, min_length=8, write_only=True
-    )
-    token = serializers.SerializerMethodField()
+        max_length=68, min_length=6, write_only=True)
+    username = serializers.CharField(
+        max_length=255, min_length=3, read_only=True)
 
-    def get_token(self, obj):
-        user = User.objects.get(email=obj['email']) # вытягиваем из базы данных пользователя
+    tokens = serializers.SerializerMethodField()
+
+    def get_tokens(self, obj):
+        user = User.objects.get(email=obj['email'])
 
         return {
-            'refresh': user.tokens()['refresh'], # токены доступа
-            'access': user.tokens()['access'] # токены обновления
+            'refresh': user.tokens()['refresh'],
+            'access': user.tokens()['access']
         }
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'token']
+        fields = ['email', 'password', 'username', 'tokens']
 
     def validate(self, attrs):
-        email = attrs.get('email', '') # извлечение email
-        password = attrs.get('password', '') # извлечение пароля
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise AuthenticationFailed('Пользователя не существует, попробуй снова')
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+        filtered_user_by_email = User.objects.filter(email=email)
+        user = auth.authenticate(email=email, password=password)
+
+        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
+            raise AuthenticationFailed(
+                detail='Please continue your login using ' + filtered_user_by_email[0].auth_provider)
 
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
@@ -93,8 +97,10 @@ class LoginSerializer(serializers.ModelSerializer):
 
         return {
             'email': user.email,
-            'tokens': user.tokens,
+            'username': user.username,
+            'tokens': user.tokens
         }
 
+        return super().validate(attrs)
 
 

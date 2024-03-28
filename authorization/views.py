@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_bytes, smart_str, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from requests import auth
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -25,6 +26,8 @@ from rest_framework.exceptions import AuthenticationFailed, APIException
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.http import urlsafe_base64_encode
+from django.contrib import auth
+from django.contrib.auth.models import User
 
 
 
@@ -148,10 +151,8 @@ class RegisterPersonalInfoView(APIView):
 
 
 
-class LoginAPIView(APIView):
-
+class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
-    permission_classes = [AllowAny,]
 
     @swagger_auto_schema(
         tags=['Authorization'],
@@ -168,7 +169,6 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 
